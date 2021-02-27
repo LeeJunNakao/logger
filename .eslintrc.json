@@ -1,0 +1,31 @@
+{
+    "extends": "standard-with-typescript",
+    "parserOptions": {
+        "project": "./tsconfig.json"
+    },
+    "rules": {
+        "semi": [2, "always"],
+        "@typescript-eslint/semi":  [2, "always"],
+        "space-before-function-paren": ["error", "never"],
+        "@typescript-eslint/space-before-function-paren": ["error", "never"],
+        "comma-dangle": ["error", {
+            "arrays": "never",
+            "objects": "always-multiline",
+            "imports": "never",
+            "exports": "never",
+            "functions": "never"
+        }],
+        "@typescript-eslint/strict-boolean-expressions": 0,
+        "@typescript-eslint/member-delimiter-style": ["error", {
+            "multiline": {
+              "delimiter": "comma",   
+              "requireLast": true
+            },
+            "singleline": {
+              "delimiter": "comma",    
+              "requireLast": false
+            }
+          }],
+          "semi-style": ["error", "last"]
+    }
+}
