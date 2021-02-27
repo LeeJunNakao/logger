@@ -126,4 +126,14 @@ describe('Signup Controller', () => {
     expect(response.status).toBe(500);
     expect(response.body).toEqual(new ServerError());
   });
+
+  test('Should call passwordHasher with correct password', () => {
+    const { sut, passwordHasherSut } = makeSut();
+    const hasherSpy = jest.spyOn(passwordHasherSut, 'hash');
+    const httpRequest = {
+      body: { ...validData, password: 'unhashed_password' },
+    };
+    sut.handle(httpRequest);
+    expect(hasherSpy).toHaveBeenCalledWith('unhashed_password');
+  });
 });
