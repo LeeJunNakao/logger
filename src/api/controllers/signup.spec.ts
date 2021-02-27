@@ -1,6 +1,6 @@
 import { SignupController } from './signup';
-import { MissingParamError, InvalidParamError } from '../errors';
-import { EmailValidator, PasswordValidator } from '../protocols';
+import { MissingParamError, InvalidParamError, ServerError } from '../errors';
+import { EmailValidator, PasswordValidator, PasswordHasher } from '../protocols';
 
 const validData = {
   name: 'valid_name',
@@ -12,6 +12,7 @@ interface SutTypes{
   sut: SignupController,
   emailValidatorSut: EmailValidator,
   passwordValidatorSut: PasswordValidatorSut,
+  passwordHasherSut: PasswordHasher,
 }
 
 class EmailValidatorSut implements EmailValidator {
@@ -26,11 +27,18 @@ class PasswordValidatorSut implements PasswordValidator {
   }
 }
 
+class PasswordHasherSut implements PasswordHasher {
+  hash(password: string): string {
+    return 'hashed_password';
+  }
+}
+
 const makeSut = (): SutTypes => {
   const emailValidatorSut = new EmailValidatorSut();
   const passwordValidatorSut = new PasswordValidatorSut();
-  const sut = new SignupController(emailValidatorSut, passwordValidatorSut);
-  return { sut, emailValidatorSut, passwordValidatorSut };
+  const passwordHasherSut = new PasswordHasherSut();
+  const sut = new SignupController(emailValidatorSut, passwordValidatorSut, passwordHasherSut);
+  return { sut, emailValidatorSut, passwordValidatorSut, passwordHasherSut };
 };
 
 describe('Signup Controller', () => {
@@ -104,5 +112,18 @@ describe('Signup Controller', () => {
     };
     sut.handle(httpRequest);
     expect(validateSpy).toHaveBeenCalledWith('correct_password');
+  });
+
+  test('Should return 500 if passwordHasher throws', () => {
+    const { sut, passwordHasherSut } = makeSut();
+    jest.spyOn(passwordHasherSut, 'hash').mockImplementationOnce(() => {
+      throw new Error();
+    });
+    const httpRequest = {
+      body: { ...validData },
+    };
+    const response = sut.handle(httpRequest);
+    expect(response.status).toBe(500);
+    expect(response.body).toEqual(new ServerError());
   });
 });

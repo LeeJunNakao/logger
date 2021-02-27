@@ -1,3 +1,3 @@
 export * from './http';
-export * from './validators';
+export * from './utils';
 export * from './controller';

@@ -26,6 +26,5 @@
               "requireLast": false
             }
           }],
-          "semi-style": ["error", "last"]
-    }
+          "semi-style": ["error", "last"]    }
 }
