@@ -95,4 +95,14 @@ describe('Signup Controller', () => {
     sut.handle(httpRequest);
     expect(validateSpy).toHaveBeenCalledWith('correct_email@email.com');
   });
+
+  test('Should call passwordValidator with correct password', () => {
+    const { sut, passwordValidatorSut } = makeSut();
+    const validateSpy = jest.spyOn(passwordValidatorSut, 'validate');
+    const httpRequest = {
+      body: { ...validData, password: 'correct_password' },
+    };
+    sut.handle(httpRequest);
+    expect(validateSpy).toHaveBeenCalledWith('correct_password');
+  });
 });
