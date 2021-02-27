@@ -1,4 +1,5 @@
 import { SignupController } from './signup';
+import { MissingParamError } from '../errors/missing-param-error';
 
 const validData = {
   name: 'valid_name',
@@ -12,5 +13,6 @@ describe('Signup Controller', () => {
     };
     const response = sut.handle(httpRequest);
     expect(response.status).toEqual(400);
+    expect(response.body).toEqual(new MissingParamError('name'));
   });
 });
