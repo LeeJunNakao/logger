@@ -3,6 +3,7 @@ import { MissingParamError } from '../errors/missing-param-error';
 
 const validData = {
   name: 'valid_name',
+  email: 'valid_email',
 };
 
 describe('Signup Controller', () => {
@@ -14,5 +15,15 @@ describe('Signup Controller', () => {
     const response = sut.handle(httpRequest);
     expect(response.status).toEqual(400);
     expect(response.body).toEqual(new MissingParamError('name'));
+  });
+
+  test('Should return 400 if no email is provided', () => {
+    const sut = new SignupController();
+    const httpRequest = {
+      body: { ...validData, email: null },
+    };
+    const response = sut.handle(httpRequest);
+    expect(response.status).toEqual(400);
+    expect(response.body).toEqual(new MissingParamError('email'));
   });
 });
