@@ -1,6 +1,8 @@
 import { SignupController } from './signup';
 import { MissingParamError, InvalidParamError, ServerError } from '../errors';
-import { EmailValidator, PasswordValidator, PasswordHasher } from '../protocols';
+import { EmailValidator, PasswordValidator, Token } from '../protocols';
+import { UserService } from '../../domain/usecases/services/add-user';
+import { AddUserDto } from '../../domain/usecases/dto/user';
 
 const validData = {
   name: 'valid_name',
@@ -12,7 +14,7 @@ interface SutTypes{
   sut: SignupController,
   emailValidatorSut: EmailValidator,
   passwordValidatorSut: PasswordValidatorSut,
-  passwordHasherSut: PasswordHasher,
+  userServiceSut: UserService,
 }
 
 class EmailValidatorSut implements EmailValidator {
@@ -27,113 +29,137 @@ class PasswordValidatorSut implements PasswordValidator {
   }
 }
 
-class PasswordHasherSut implements PasswordHasher {
-  hash(password: string): string {
-    return 'hashed_password';
+const makeUserService = (): UserService => {
+  class Service implements UserService {
+    async add(account: AddUserDto): Promise<Token> {
+      return await new Promise(resolve => resolve({ token: 'valid_token' }));
+    }
   }
-}
+
+  return new Service();
+};
 
 const makeSut = (): SutTypes => {
   const emailValidatorSut = new EmailValidatorSut();
   const passwordValidatorSut = new PasswordValidatorSut();
-  const passwordHasherSut = new PasswordHasherSut();
-  const sut = new SignupController(emailValidatorSut, passwordValidatorSut, passwordHasherSut);
-  return { sut, emailValidatorSut, passwordValidatorSut, passwordHasherSut };
+  const userServiceSut = makeUserService();
+  const sut = new SignupController(emailValidatorSut, passwordValidatorSut, userServiceSut);
+  return { sut, emailValidatorSut, passwordValidatorSut, userServiceSut };
 };
 
 describe('Signup Controller', () => {
-  test('Should return 400 if no name is provided', () => {
+  test('Should return 400 if no name is provided', async() => {
     const { sut } = makeSut();
     const httpRequest = {
       body: { ...validData, name: null },
     };
-    const response = sut.handle(httpRequest);
+    const response = await sut.handle(httpRequest);
     expect(response.status).toEqual(400);
     expect(response.body).toEqual(new MissingParamError('name'));
   });
 
-  test('Should return 400 if no email is provided', () => {
+  test('Should return 400 if no email is provided', async() => {
     const { sut } = makeSut();
     const httpRequest = {
       body: { ...validData, email: null },
     };
-    const response = sut.handle(httpRequest);
+    const response = await sut.handle(httpRequest);
     expect(response.status).toEqual(400);
     expect(response.body).toEqual(new MissingParamError('email'));
   });
 
-  test('Should return 400 if no password is provided', () => {
+  test('Should return 400 if no password is provided', async() => {
     const { sut } = makeSut();
     const httpRequest = {
       body: { ...validData, password: null },
     };
-    const response = sut.handle(httpRequest);
+    const response = await sut.handle(httpRequest);
     expect(response.status).toEqual(400);
     expect(response.body).toEqual(new MissingParamError('password'));
   });
 
-  test('Should return 400 if email is not valid', () => {
+  test('Should return 400 if email is not valid', async() => {
     const { sut, emailValidatorSut } = makeSut();
     jest.spyOn(emailValidatorSut, 'validate').mockReturnValueOnce(false);
     const httpRequest = {
       body: { ...validData, email: 'invalid_email@email.com' },
     };
-    const response = sut.handle(httpRequest);
+    const response = await sut.handle(httpRequest);
     expect(response.status).toEqual(400);
     expect(response.body).toEqual(new InvalidParamError('email'));
   });
 
-  test('Should return 400 if password is not valid', () => {
+  test('Should return 400 if password is not valid', async() => {
     const { sut, passwordValidatorSut } = makeSut();
     jest.spyOn(passwordValidatorSut, 'validate').mockReturnValueOnce(false);
     const httpRequest = {
       body: { ...validData, password: 'invalid_password' },
     };
-    const response = sut.handle(httpRequest);
+    const response = await sut.handle(httpRequest);
     expect(response.status).toEqual(400);
     expect(response.body).toEqual(new InvalidParamError('password'));
   });
 
-  test('Should call emailValidator with correct email', () => {
+  test('Should call emailValidator with correct email', async() => {
     const { sut, emailValidatorSut } = makeSut();
     const validateSpy = jest.spyOn(emailValidatorSut, 'validate');
     const httpRequest = {
       body: { ...validData, email: 'correct_email@email.com' },
     };
-    sut.handle(httpRequest);
+    await sut.handle(httpRequest);
     expect(validateSpy).toHaveBeenCalledWith('correct_email@email.com');
   });
 
-  test('Should call passwordValidator with correct password', () => {
+  test('Should call passwordValidator with correct password', async() => {
     const { sut, passwordValidatorSut } = makeSut();
     const validateSpy = jest.spyOn(passwordValidatorSut, 'validate');
     const httpRequest = {
       body: { ...validData, password: 'correct_password' },
     };
-    sut.handle(httpRequest);
+    await sut.handle(httpRequest);
     expect(validateSpy).toHaveBeenCalledWith('correct_password');
   });
 
-  test('Should return 500 if passwordHasher throws', () => {
-    const { sut, passwordHasherSut } = makeSut();
-    jest.spyOn(passwordHasherSut, 'hash').mockImplementationOnce(() => {
+  // test('Should call passwordHasher with correct password', () => {
+  //   const { sut, passwordHasherSut } = makeSut();
+  //   const hasherSpy = jest.spyOn(passwordHasherSut, 'hash');
+  //   const httpRequest = {
+  //     body: { ...validData, password: 'unhashed_password' },
+  //   };
+  //   sut.handle(httpRequest);
+  //   expect(hasherSpy).toHaveBeenCalledWith('unhashed_password');
+  // });
+
+  test('Should add user with correct data', async() => {
+    const { sut, userServiceSut } = makeSut();
+    const httpRequest = {
+      body: validData,
+    };
+    const serviceSpy = jest.spyOn(userServiceSut, 'add');
+    await sut.handle(httpRequest);
+    expect(serviceSpy).toHaveBeenCalledWith(validData);
+  });
+
+  test('Should return 500 if service throws', async() => {
+    const { sut, userServiceSut } = makeSut();
+    jest.spyOn(userServiceSut, 'add').mockImplementationOnce(() => {
       throw new Error();
     });
     const httpRequest = {
       body: { ...validData },
     };
-    const response = sut.handle(httpRequest);
+    const response = await sut.handle(httpRequest);
     expect(response.status).toBe(500);
     expect(response.body).toEqual(new ServerError());
   });
 
-  test('Should call passwordHasher with correct password', () => {
-    const { sut, passwordHasherSut } = makeSut();
-    const hasherSpy = jest.spyOn(passwordHasherSut, 'hash');
+  test('Should return token if all data is valid', async() => {
+    const { sut } = makeSut();
     const httpRequest = {
-      body: { ...validData, password: 'unhashed_password' },
+      body: { ...validData },
     };
-    sut.handle(httpRequest);
-    expect(hasherSpy).toHaveBeenCalledWith('unhashed_password');
+    const response = await sut.handle(httpRequest);
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ token: 'valid_token' });
   });
 });

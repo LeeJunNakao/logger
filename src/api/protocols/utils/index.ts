@@ -1,2 +1,2 @@
-export * from './password-hasher';
+export * from './encrypter';
 export * from './validators';

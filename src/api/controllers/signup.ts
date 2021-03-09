@@ -1,22 +1,23 @@
-import { HttpRequest, HttpResponse, EmailValidator, PasswordValidator, PasswordHasher } from '../protocols';
+import { HttpRequest, HttpResponse, EmailValidator, PasswordValidator } from '../protocols';
 import { MissingParamError, InvalidParamError } from '../errors';
 import { badRequest, serverError } from '../helpers';
+import { UserService } from '../../domain/usecases/services/add-user';
 
 export class SignupController {
   private readonly emailValidator: EmailValidator;
   private readonly passwordValidator: PasswordValidator;
-  private readonly passwordHasher: PasswordHasher;
+  private readonly userService: UserService;
 
-  constructor(emailValidator: EmailValidator, passwordValidator: PasswordValidator, passwordHasher: PasswordHasher) {
+  constructor(emailValidator: EmailValidator, passwordValidator: PasswordValidator, userService: UserService) {
     this.emailValidator = emailValidator;
     this.passwordValidator = passwordValidator;
-    this.passwordHasher = passwordHasher;
+    this.userService = userService;
   }
 
-  handle(httpRequest: HttpRequest): HttpResponse {
+  async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const requiredFields = ['name', 'email', 'password'];
-      const { email, password } = httpRequest.body;
+      const { name, email, password } = httpRequest.body;
 
       for (const field of requiredFields) {
         if (!httpRequest.body[field]) {
@@ -33,11 +34,15 @@ export class SignupController {
         return badRequest(new InvalidParamError('password'));
       }
 
-      this.passwordHasher.hash(password);
+      const token = await this.userService.add({
+        name,
+        email,
+        password,
+      });
 
       return {
         status: 200,
-        body: null,
+        body: token,
       };
     } catch (error) {
       return serverError();
