@@ -1,14 +1,14 @@
 import { HttpRequest, HttpResponse, EmailValidator, PasswordValidator } from '../protocols';
 import { MissingParamError, InvalidParamError } from '../errors';
 import { badRequest, serverError } from '../helpers';
-import { UserService } from '../../domain/usecases/services/add-user';
+import { IUserService } from '../../domain/protocols/user-service';
 
 export class SignupController {
   private readonly emailValidator: EmailValidator;
   private readonly passwordValidator: PasswordValidator;
-  private readonly userService: UserService;
+  private readonly userService: IUserService;
 
-  constructor(emailValidator: EmailValidator, passwordValidator: PasswordValidator, userService: UserService) {
+  constructor(emailValidator: EmailValidator, passwordValidator: PasswordValidator, userService: IUserService) {
     this.emailValidator = emailValidator;
     this.passwordValidator = passwordValidator;
     this.userService = userService;

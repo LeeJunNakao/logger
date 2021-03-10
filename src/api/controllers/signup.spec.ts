@@ -1,7 +1,7 @@
 import { SignupController } from './signup';
 import { MissingParamError, InvalidParamError, ServerError } from '../errors';
 import { EmailValidator, PasswordValidator, Token } from '../protocols';
-import { UserService } from '../../domain/usecases/services/add-user';
+import { IUserService } from '../../domain/protocols/user-service';
 import { AddUserDto } from '../../domain/usecases/dto/user';
 
 const validData = {
@@ -14,7 +14,7 @@ interface SutTypes{
   sut: SignupController,
   emailValidatorSut: EmailValidator,
   passwordValidatorSut: PasswordValidatorSut,
-  userServiceSut: UserService,
+  userServiceSut: IUserService,
 }
 
 class EmailValidatorSut implements EmailValidator {
@@ -29,8 +29,8 @@ class PasswordValidatorSut implements PasswordValidator {
   }
 }
 
-const makeUserService = (): UserService => {
-  class Service implements UserService {
+const makeUserService = (): IUserService => {
+  class Service implements IUserService {
     async add(account: AddUserDto): Promise<Token> {
       return await new Promise(resolve => resolve({ token: 'valid_token' }));
     }
