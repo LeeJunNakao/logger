@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class Users {
+export class UsersModel {
   @PrimaryGeneratedColumn()
   id: number;
 
