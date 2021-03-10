@@ -120,16 +120,6 @@ describe('Signup Controller', () => {
     expect(validateSpy).toHaveBeenCalledWith('correct_password');
   });
 
-  // test('Should call passwordHasher with correct password', () => {
-  //   const { sut, passwordHasherSut } = makeSut();
-  //   const hasherSpy = jest.spyOn(passwordHasherSut, 'hash');
-  //   const httpRequest = {
-  //     body: { ...validData, password: 'unhashed_password' },
-  //   };
-  //   sut.handle(httpRequest);
-  //   expect(hasherSpy).toHaveBeenCalledWith('unhashed_password');
-  // });
-
   test('Should add user with correct data', async() => {
     const { sut, userServiceSut } = makeSut();
     const httpRequest = {
