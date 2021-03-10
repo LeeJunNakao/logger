@@ -1,2 +1,2 @@
-export * from './encrypter';
-export * from './validators';
+export * from '../../../utils/protocols/encrypter';
+export * from '../../../utils/protocols/validators';

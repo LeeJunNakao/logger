@@ -1,0 +1,48 @@
+Arguments: 
+  /usr/bin/node /usr/share/yarn/bin/yarn.js typeorm init
+
+PATH: 
+  /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Users/T-Gamer/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/T-Gamer/AppData/Local/Programs/Microsoft VS Code/bin:/snap/bin
+
+Yarn version: 
+  1.22.5
+
+Node version: 
+  15.8.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  SyntaxError: /mnt/c/Users/T-Gamer/Desktop/Pessoais/Programação/Repositórios/logger/backend/logger/package.json: Unexpected token } in JSON at position 400
+      at JSON.parse (<anonymous>)
+      at /usr/share/yarn/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/usr/share/yarn/lib/cli.js:310:30)
+      at /usr/share/yarn/lib/cli.js:321:13
+
+npm manifest: 
+  {
+     "name": "logger",
+     "version": "0.0.1",
+     "description": "Awesome project developed with TypeORM.",
+     "devDependencies": {
+        "ts-node": "3.3.0",
+        "@types/node": "^8.0.29",
+        "typescript": "3.3.3333"
+     },
+     "dependencies": {
+        "typeorm": "0.2.31",
+        "reflect-metadata": "^0.1.10",
+        "mysql": "^2.14.1"
+     },
+     "scripts": {
+        "start": "ts-node src/index.ts",
+     }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

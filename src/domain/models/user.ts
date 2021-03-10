@@ -1,6 +1,17 @@
-export interface UserModel {
-  id: Number,
-  name: string,
-  email: string,
-  password: string,
+import 'reflect-metadata';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity()
+export class Users {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ length: 100 })
+  name: string;
+
+  @Column({ length: 100 })
+  email: string;
+
+  @Column()
+  password: string;
 }
