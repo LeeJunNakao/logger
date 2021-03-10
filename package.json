@@ -45,6 +45,7 @@
     ]
   },
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "pg": "^8.5.1",
     "reflect-metadata": "^0.1.13",
     "typeorm": "0.2.31",
