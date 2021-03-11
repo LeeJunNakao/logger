@@ -12,4 +12,9 @@ export class EncrypterAdapter implements Encrypter {
     const hash = await bcrypt.hash(value, this.saltRounds);
     return hash;
   }
+
+  async isValid(unhashed: string, hash: string): Promise<Boolean> {
+    const isValid = await bcrypt.compare(unhashed, hash);
+    return isValid;
+  }
 }

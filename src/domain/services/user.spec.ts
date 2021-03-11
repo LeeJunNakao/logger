@@ -1,9 +1,8 @@
 import { UserService } from './user';
-import { AddUserDto } from '../usecases/dto/user';
+import { AddUserDto, UserDto } from '../usecases/dto/user';
 import { UserRepo } from '../../infra/db/repo/protocols/user-repo';
 import { Encrypter } from '../../utils/protocols/encrypter';
 import { Jwt } from '../../utils/protocols/jwt';
-import { UsersModel } from '../../domain/models/user';
 import { Token } from '../../api/protocols';
 
 const userDto = {
@@ -20,12 +19,19 @@ interface SutTypes {
 }
 
 class UserRepoSut implements UserRepo {
-  async add(dto: AddUserDto): Promise<UsersModel> {
+  async add(dto: AddUserDto): Promise<UserDto> {
     return await new Promise((resolve) => resolve({
       id: 1,
       name: dto.name,
       email: dto.email,
-      password: dto.password,
+    }));
+  }
+
+  async get(id: string | number): Promise<UserDto> {
+    return await new Promise(resolve => resolve({
+      id: 1,
+      name: 'someone',
+      email: 'someone@email.com',
     }));
   }
 }
@@ -33,6 +39,10 @@ class UserRepoSut implements UserRepo {
 class EncrypterSut implements Encrypter {
   async hash(value: string): Promise<string> {
     return await new Promise((resolve) => resolve('hash'));
+  }
+
+  async isValid(unhashed: string, hash: string): Promise<Boolean> {
+    return await new Promise((resolve) => resolve(true));
   }
 }
 

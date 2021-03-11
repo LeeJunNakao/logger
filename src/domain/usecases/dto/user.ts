@@ -5,7 +5,7 @@ export interface AddUserDto {
 }
 
 export interface UserDto {
-  id: string,
+  id: string | number,
   name: string,
   email: string,
 }
