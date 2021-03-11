@@ -1,6 +1,6 @@
-import { UsersModel } from '../../../../domain/models/user';
-import { AddUserDto } from '../../../../domain/usecases/dto/user';
+import { AddUserDto, UserDto } from '../../../../domain/usecases/dto/user';
 
 export interface UserRepo {
-  add: (dto: AddUserDto) => Promise<UsersModel>,
+  add: (dto: AddUserDto) => Promise<UserDto>,
+  get: (id: string) => Promise<UserDto>,
 }
