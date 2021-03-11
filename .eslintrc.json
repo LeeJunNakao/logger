@@ -27,6 +27,7 @@
             }
           }],
         "semi-style": ["error", "last"],
-        "@typescript-eslint/restrict-template-expressions": 0
+        "@typescript-eslint/restrict-template-expressions": 0,
+        "@typescript-eslint/no-misused-promises": 0
         }
 }
