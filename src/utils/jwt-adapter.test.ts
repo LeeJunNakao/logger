@@ -32,5 +32,7 @@ describe('Json Web Token Adapter', () => {
     const promise = sut.decode(token);
 
     await expect(promise).rejects.toThrow();
+
+    clock.restore();
   });
 });
