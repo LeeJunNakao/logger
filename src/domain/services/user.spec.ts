@@ -91,4 +91,25 @@ describe('User Service', () => {
     const token = await sut.add(userDto);
     expect(token).toEqual({ token: 'valid_token' });
   });
+
+  test('Should throw if encrypter throws', async() => {
+    const { sut, encrypterSut } = makeSut();
+    jest.spyOn(encrypterSut, 'hash').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+    const promise = sut.add(userDto);
+    await expect(promise).rejects.toThrow();
+  });
+
+  test('Should throw if repo throws', async() => {
+    const { sut, repoSut } = makeSut();
+    jest.spyOn(repoSut, 'add').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+    const promise = sut.add(userDto);
+    await expect(promise).rejects.toThrow();
+  });
+
+  test('Should throw if jwt throws', async() => {
+    const { sut, jwtSut } = makeSut();
+    jest.spyOn(jwtSut, 'encode').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+    const promise = sut.add(userDto);
+    await expect(promise).rejects.toThrow();
+  });
 });
