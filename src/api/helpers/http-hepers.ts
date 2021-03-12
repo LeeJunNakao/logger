@@ -3,7 +3,7 @@ import { ServerError } from '../errors';
 
 export const badRequest = (error: Error): HttpResponse => ({
   status: 400,
-  body: error,
+  body: { message: error.message },
 });
 
 export const serverError = (): HttpResponse => ({

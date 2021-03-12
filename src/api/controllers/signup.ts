@@ -1,9 +1,9 @@
-import { HttpRequest, HttpResponse, EmailValidator, PasswordValidator } from '../protocols';
+import { HttpRequest, HttpResponse, EmailValidator, PasswordValidator, Controller } from '../protocols';
 import { MissingParamError, InvalidParamError } from '../errors';
 import { badRequest, serverError } from '../helpers';
 import { IUserService } from '../../domain/protocols/user-service';
 
-export class SignupController {
+export class SignupController implements Controller {
   private readonly emailValidator: EmailValidator;
   private readonly passwordValidator: PasswordValidator;
   private readonly userService: IUserService;

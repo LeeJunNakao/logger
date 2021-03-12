@@ -55,7 +55,9 @@ describe('Signup Controller', () => {
     };
     const response = await sut.handle(httpRequest);
     expect(response.status).toEqual(400);
-    expect(response.body).toEqual(new MissingParamError('name'));
+    expect(response.body).toEqual({
+      message: (new MissingParamError('name')).message,
+    });
   });
 
   test('Should return 400 if no email is provided', async() => {
@@ -65,7 +67,9 @@ describe('Signup Controller', () => {
     };
     const response = await sut.handle(httpRequest);
     expect(response.status).toEqual(400);
-    expect(response.body).toEqual(new MissingParamError('email'));
+    expect(response.body).toEqual({
+      message: (new MissingParamError('email')).message,
+    });
   });
 
   test('Should return 400 if no password is provided', async() => {
@@ -75,7 +79,9 @@ describe('Signup Controller', () => {
     };
     const response = await sut.handle(httpRequest);
     expect(response.status).toEqual(400);
-    expect(response.body).toEqual(new MissingParamError('password'));
+    expect(response.body).toEqual({
+      message: (new MissingParamError('password')).message,
+    });
   });
 
   test('Should return 400 if email is not valid', async() => {
@@ -86,7 +92,9 @@ describe('Signup Controller', () => {
     };
     const response = await sut.handle(httpRequest);
     expect(response.status).toEqual(400);
-    expect(response.body).toEqual(new InvalidParamError('email'));
+    expect(response.body).toEqual({
+      message: (new InvalidParamError('email')).message,
+    });
   });
 
   test('Should return 400 if password is not valid', async() => {
@@ -97,7 +105,9 @@ describe('Signup Controller', () => {
     };
     const response = await sut.handle(httpRequest);
     expect(response.status).toEqual(400);
-    expect(response.body).toEqual(new InvalidParamError('password'));
+    expect(response.body).toEqual({
+      message: (new InvalidParamError('password')).message,
+    });
   });
 
   test('Should call emailValidator with correct email', async() => {
