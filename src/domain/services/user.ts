@@ -1,5 +1,5 @@
 import { IUserService } from '../protocols/user-service';
-import { AddUserDto, LoginUserDto } from '../usecases/dto/user';
+import { AddUserDto, LoginUserDto, UserInfoDto } from '../usecases/dto/user';
 import { Token } from '../../api/protocols/http';
 import { UserRepo } from '../../infra/db/repo/protocols/user-repo';
 import { Encrypter } from '../../utils/protocols/encrypter';
@@ -31,5 +31,9 @@ export class UserService implements IUserService {
     if (!isValid) throw new AuthError();
     const token = await this.jwt.encode({ id: user.id, name: user.name, email: user.email });
     return token;
+  }
+
+  async validateToken(token: Token): Promise<UserInfoDto> {
+    return await this.jwt.decode(token);
   }
 }

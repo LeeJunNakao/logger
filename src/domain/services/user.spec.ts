@@ -66,7 +66,7 @@ const makeSut = (): SutTypes => {
   return { sut, repoSut, encrypterSut, jwtSut };
 };
 
-describe('User Service', () => {
+describe('User Service add', () => {
   test('Should call encrypter with right password', async() => {
     const { sut, encrypterSut } = makeSut();
     const encrypterSpy = jest.spyOn(encrypterSut, 'hash');
