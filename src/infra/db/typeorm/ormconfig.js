@@ -1,9 +1,9 @@
-const dotenv = require("dotenv");
+const dotenv = require('dotenv');
 
 dotenv.config();
 
 const config = {
-  type: "postgres",
+  type: 'postgres',
   host: process.env.PGHOST,
   port: process.env.PGPORT,
   username: process.env.PGUSER,
@@ -14,13 +14,13 @@ const config = {
   ssl: {
     rejectUnauthorized: false,
   },
-  entities: ["../../../domain/models/**/*.ts"],
-  migrations: ["**/migration/**/*.ts"],
-  subscribers: ["src/subscriber/**/*.ts"],
+  entities: ['../../../domain/models/**/*.ts'],
+  migrations: ['**/migration/**/*.ts'],
+  subscribers: ['src/subscriber/**/*.ts'],
   cli: {
-    entitiesDir: "src/entity",
-    migrationsDir: "src/migration",
-    subscribersDir: "src/subscriber",
+    entitiesDir: 'src/entity',
+    migrationsDir: 'src/migration',
+    subscribersDir: 'src/subscriber',
   },
 };
 
