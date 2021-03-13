@@ -12,7 +12,7 @@ const config = {
   synchronize: true,
   logging: false,
   entities: [
-    '../../../domain/**/*.ts'
+    '../../../domain/models/**/*.ts'
   ],
   migrations: [
     '**/migration/**/*.ts'
