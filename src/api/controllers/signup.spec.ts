@@ -2,7 +2,7 @@ import { SignupController } from './signup';
 import { MissingParamError, InvalidParamError, ServerError } from '../errors';
 import { EmailValidator, PasswordValidator, Token } from '../protocols';
 import { IUserService } from '../../domain/protocols/user-service';
-import { AddUserDto } from '../../domain/usecases/dto/user';
+import { AddUserDto, LoginUserDto } from '../../domain/usecases/dto/user';
 
 const validData = {
   name: 'valid_name',
@@ -31,7 +31,11 @@ class PasswordValidatorSut implements PasswordValidator {
 
 const makeUserService = (): IUserService => {
   class Service implements IUserService {
-    async add(account: AddUserDto): Promise<Token> {
+    async add(dto: AddUserDto): Promise<Token> {
+      return await new Promise(resolve => resolve({ token: 'valid_token' }));
+    }
+
+    async login(dto: LoginUserDto): Promise<Token> {
       return await new Promise(resolve => resolve({ token: 'valid_token' }));
     }
   }

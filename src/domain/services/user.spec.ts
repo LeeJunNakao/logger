@@ -1,5 +1,5 @@
 import { UserService } from './user';
-import { AddUserDto, UserDto } from '../usecases/dto/user';
+import { AddUserDto, UserDto, LoginUserDto } from '../usecases/dto/user';
 import { UserRepo } from '../../infra/db/repo/protocols/user-repo';
 import { Encrypter } from '../../utils/protocols/encrypter';
 import { Jwt } from '../../utils/protocols/jwt';
@@ -24,14 +24,16 @@ class UserRepoSut implements UserRepo {
       id: 1,
       name: dto.name,
       email: dto.email,
+      password: '',
     }));
   }
 
-  async get(id: string | number): Promise<UserDto> {
+  async get(userInfo: LoginUserDto): Promise<UserDto> {
     return await new Promise(resolve => resolve({
       id: 1,
       name: 'someone',
       email: 'someone@email.com',
+      password: 'hashed_password',
     }));
   }
 }

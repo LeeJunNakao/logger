@@ -11,17 +11,34 @@ export class UserRepo implements IUserRepo {
       id: user.id,
       name: user.name,
       email: user.email,
+      password: '',
     };
   };
 
-  async get(id: string | number): Promise<UserDto> {
-    const { rows } = await pg.query('SELECT * FROM users WHERE id = $1', [id]);
-    const user = rows[0];
+  async get(dto: UserDto): Promise<UserDto> {
+    const condition = this.parseSearchQuery(dto);
+    const { rows } = await pg.query(`SELECT * FROM users WHERE (${condition})`, null);
+    const user = rows[0] || {};
 
     return {
       id: user.id,
       name: user.name,
       email: user.email,
+      password: user.password,
     };
+  }
+
+  private parseSearchQuery(dto: UserDto): string {
+    const entries = Object.entries(dto).filter(e => e[1]);
+    const entriesParsed = entries.map(e => this.parseString(e));
+    const conditions = entriesParsed.map(c => c.join(' = '));
+    const oration = conditions.join(' AND ');
+    return oration;
+  }
+
+  private parseString(entry: any[]): any[] {
+    const [key, value] = entry;
+    if (typeof entry[1] === 'string') return [key, `'${value}'`];
+    return entry;
   }
 }

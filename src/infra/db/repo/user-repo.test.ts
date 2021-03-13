@@ -24,13 +24,14 @@ describe('User Repo', () => {
   });
 
   test('Should get user after inserted', async() => {
-    const { name, email } = createUserDto;
+    const { email, password } = createUserDto;
     const repo = new UserRepo();
-    const { id } = await repo.add(createUserDto);
-    const user = await repo.get(id);
+    const addedUser = await repo.add(createUserDto);
+    const user = await repo.get({ email, password, id: '', name: '' });
 
-    expect(user.name).toEqual(name);
-    expect(user.email).toEqual(email);
+    expect(user.name).toEqual(addedUser.name);
+    expect(user.email).toEqual(addedUser.email);
     expect(user.id).toBeTruthy();
+    expect(user.id).toEqual(addedUser.id);
   });
 });

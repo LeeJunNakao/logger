@@ -45,7 +45,6 @@ export class SignupController implements Controller {
         body: token,
       };
     } catch (error) {
-      console.log(error);
       return serverError();
     }
   }
