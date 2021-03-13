@@ -5,3 +5,6 @@ coverage
 yarn.lock
 yarn-error.log
 .env.test
+npm-debug.log
+.DS_Store
+/dist
