@@ -1,3 +1,1 @@
-web: yarn typeorm:install
-web: yarn typeorm:migration
-web: yarn start
+web: yarn typeorm:install && yarn typeorm:migration && yarn start
