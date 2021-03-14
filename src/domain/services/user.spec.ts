@@ -11,6 +11,12 @@ const userDto = {
   password: 'raw_password',
 };
 
+const userInfo = {
+  id: 1,
+  name: userDto.name,
+  email: userDto.email,
+};
+
 interface SutTypes {
   sut: UserService,
   repoSut: UserRepo,
@@ -54,7 +60,7 @@ class JwtSut implements Jwt {
   }
 
   async decode(token: Token): Promise<any> {
-    return await new Promise((resolve) => resolve(userDto));
+    return await new Promise((resolve) => resolve({ data: userInfo }));
   }
 }
 
@@ -179,6 +185,6 @@ describe('User Service validateToken', () => {
   test('Should return user data', async() => {
     const { sut } = makeSut();
     const result = await sut.validateToken(token);
-    expect(result).toEqual(userDto);
+    expect(result).toEqual(userInfo);
   });
 });

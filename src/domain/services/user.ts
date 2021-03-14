@@ -34,6 +34,7 @@ export class UserService implements IUserService {
   }
 
   async validateToken(token: Token): Promise<UserInfoDto> {
-    return await this.jwt.decode(token);
+    const { id, name, email } = (await this.jwt.decode(token)).data;
+    return { id, name, email };
   }
 }

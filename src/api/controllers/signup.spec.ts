@@ -1,59 +1,10 @@
-import { SignupController } from './signup';
 import { MissingParamError, InvalidParamError, ServerError } from '../errors';
-import { EmailValidator, PasswordValidator, Token } from '../protocols';
-import { IUserService } from '../../domain/protocols/user-service';
-import { AddUserDto, LoginUserDto } from '../../domain/usecases/dto/user';
-
-const validData = {
-  name: 'valid_name',
-  email: 'valid_email@email.com',
-  password: 'valid_password',
-};
-
-interface SutTypes{
-  sut: SignupController,
-  emailValidatorSut: EmailValidator,
-  passwordValidatorSut: PasswordValidatorSut,
-  userServiceSut: IUserService,
-}
-
-class EmailValidatorSut implements EmailValidator {
-  validate(email: string): Boolean {
-    return true;
-  }
-}
-
-class PasswordValidatorSut implements PasswordValidator {
-  validate(password: string): Boolean {
-    return true;
-  }
-}
-
-const makeUserService = (): IUserService => {
-  class Service implements IUserService {
-    async add(dto: AddUserDto): Promise<Token> {
-      return await new Promise(resolve => resolve({ token: 'valid_token' }));
-    }
-
-    async login(dto: LoginUserDto): Promise<Token> {
-      return await new Promise(resolve => resolve({ token: 'valid_token' }));
-    }
-  }
-
-  return new Service();
-};
-
-const makeSut = (): SutTypes => {
-  const emailValidatorSut = new EmailValidatorSut();
-  const passwordValidatorSut = new PasswordValidatorSut();
-  const userServiceSut = makeUserService();
-  const sut = new SignupController(emailValidatorSut, passwordValidatorSut, userServiceSut);
-  return { sut, emailValidatorSut, passwordValidatorSut, userServiceSut };
-};
+import { makeSut, user as validData } from './test-config';
+import { SignupController } from './signup';
 
 describe('Signup Controller', () => {
   test('Should return 400 if no name is provided', async() => {
-    const { sut } = makeSut();
+    const { sut } = makeSut(SignupController);
     const httpRequest = {
       body: { ...validData, name: null },
     };
@@ -65,7 +16,7 @@ describe('Signup Controller', () => {
   });
 
   test('Should return 400 if no email is provided', async() => {
-    const { sut } = makeSut();
+    const { sut } = makeSut(SignupController);
     const httpRequest = {
       body: { ...validData, email: null },
     };
@@ -77,7 +28,7 @@ describe('Signup Controller', () => {
   });
 
   test('Should return 400 if no password is provided', async() => {
-    const { sut } = makeSut();
+    const { sut } = makeSut(SignupController);
     const httpRequest = {
       body: { ...validData, password: null },
     };
@@ -89,7 +40,7 @@ describe('Signup Controller', () => {
   });
 
   test('Should return 400 if email is not valid', async() => {
-    const { sut, emailValidatorSut } = makeSut();
+    const { sut, emailValidatorSut } = makeSut(SignupController);
     jest.spyOn(emailValidatorSut, 'validate').mockReturnValueOnce(false);
     const httpRequest = {
       body: { ...validData, email: 'invalid_email@email.com' },
@@ -102,7 +53,7 @@ describe('Signup Controller', () => {
   });
 
   test('Should return 400 if password is not valid', async() => {
-    const { sut, passwordValidatorSut } = makeSut();
+    const { sut, passwordValidatorSut } = makeSut(SignupController);
     jest.spyOn(passwordValidatorSut, 'validate').mockReturnValueOnce(false);
     const httpRequest = {
       body: { ...validData, password: 'invalid_password' },
@@ -115,7 +66,7 @@ describe('Signup Controller', () => {
   });
 
   test('Should call emailValidator with correct email', async() => {
-    const { sut, emailValidatorSut } = makeSut();
+    const { sut, emailValidatorSut } = makeSut(SignupController);
     const validateSpy = jest.spyOn(emailValidatorSut, 'validate');
     const httpRequest = {
       body: { ...validData, email: 'correct_email@email.com' },
@@ -125,7 +76,7 @@ describe('Signup Controller', () => {
   });
 
   test('Should call passwordValidator with correct password', async() => {
-    const { sut, passwordValidatorSut } = makeSut();
+    const { sut, passwordValidatorSut } = makeSut(SignupController);
     const validateSpy = jest.spyOn(passwordValidatorSut, 'validate');
     const httpRequest = {
       body: { ...validData, password: 'correct_password' },
@@ -135,17 +86,17 @@ describe('Signup Controller', () => {
   });
 
   test('Should add user with correct data', async() => {
-    const { sut, userServiceSut } = makeSut();
+    const { sut, userServiceSut } = makeSut(SignupController);
     const httpRequest = {
       body: validData,
     };
     const serviceSpy = jest.spyOn(userServiceSut, 'add');
     await sut.handle(httpRequest);
-    expect(serviceSpy).toHaveBeenCalledWith(validData);
+    expect(serviceSpy).toHaveBeenCalledWith({ name: validData.name, email: validData.email, password: validData.password });
   });
 
   test('Should return 500 if service throws', async() => {
-    const { sut, userServiceSut } = makeSut();
+    const { sut, userServiceSut } = makeSut(SignupController);
     jest.spyOn(userServiceSut, 'add').mockImplementationOnce(() => {
       throw new Error();
     });
@@ -158,7 +109,7 @@ describe('Signup Controller', () => {
   });
 
   test('Should return token if all data is valid', async() => {
-    const { sut } = makeSut();
+    const { sut } = makeSut(SignupController);
     const httpRequest = {
       body: { ...validData },
     };

@@ -4,11 +4,11 @@ import { truncateDatabase } from '../../infra/db/helpers/query-helpers';
 
 const data = { name: 'João das Neves', email: 'john@snow.com', password: 'Senha937#' };
 
-describe('SignupController Integration', () => {
+describe('Signup route', () => {
   beforeAll(async() => await truncateDatabase());
   afterEach(async() => await truncateDatabase());
   const url = '/signup';
-  test('Should throw error if no data is provided', async() => {
+  test('Should return 400 if no data is provided', async() => {
     await request(app)
       .post(url)
       .send()
@@ -61,12 +61,12 @@ describe('SignupController Integration', () => {
   });
 });
 
-describe('SigninController Integration', () => {
+describe('Signin route', () => {
   beforeAll(async() => await truncateDatabase());
   afterEach(async() => await truncateDatabase());
 
   const url = '/signin';
-  test('Should throw error if no data is provided', async() => {
+  test('Should return 400 if no data is provided', async() => {
     await request(app)
       .post(url)
       .send()
@@ -126,5 +126,35 @@ describe('SigninController Integration', () => {
       .post(url)
       .send({ ...data, password: '*pYr99BNk7' })
       .expect(400, { message: 'Combination email and password is not valid' });
+  });
+});
+
+describe('Validate token route', () => {
+  beforeAll(async() => await truncateDatabase());
+  afterEach(async() => await truncateDatabase());
+
+  test('Should return 400 if token is invalid', async() => {
+    await request(app)
+      .post('/validate-token')
+      .send({ token: 'invalid_token' })
+      .expect(400, { message: 'Token is invalid' });
+  });
+
+  test('Should return user info if token is valid', async() => {
+    await request(app).post('/signup')
+      .send(data)
+      .then(async(response) => {
+        const token = response.body.token;
+
+        await request(app)
+          .post('/validate-token')
+          .send({ token })
+          .then(res => {
+            const { name, email } = res.body;
+            expect(res.status).toBe(200);
+            expect(name).toBe(data.name);
+            expect(email).toBe(data.email);
+          });
+      });
   });
 });

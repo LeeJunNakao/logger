@@ -24,7 +24,7 @@ export class JwtAdapter implements Jwt {
   }
 
   async decode(token: Token): Promise<any> {
-    const decoded = jwt.verify(token.token, this.key);
+    const decoded = await jwt.verify(token.token, this.key);
     return decoded;
   }
 }
