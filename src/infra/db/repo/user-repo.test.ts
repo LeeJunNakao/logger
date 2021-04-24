@@ -13,6 +13,18 @@ describe('User Repo', () => {
 
   afterEach(async() => await truncateDatabase());
 
+  test('Should throw if email already exists', async() => {
+    const repo = new UserRepo();
+    await repo.add(createUserDto);
+    const promise = repo.add({
+      name: 'James de Oliveira',
+      email: 'james@email.com',
+      password: '123456'
+    })
+
+    await expect(promise).rejects.toThrowError();
+  });
+
   test('Should insert into database successfully', async() => {
     const { name, email } = createUserDto;
     const repo = new UserRepo();

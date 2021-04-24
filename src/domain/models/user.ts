@@ -2,14 +2,14 @@ import 'reflect-metadata';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class UsersModel {
+export class Users {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ length: 100 })
   name: string;
 
-  @Column({ length: 100 })
+  @Column({ length: 100, unique: true })
   email: string;
 
   @Column()
