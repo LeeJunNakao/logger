@@ -1,9 +1,12 @@
 import { UserRepo as IUserRepo } from './protocols/user-repo';
 import { AddUserDto, UserDto } from '../../../domain/usecases/dto/user';
+import { AlreadyRegisteredEmailError } from '../errors';
 import pg from '../helpers/connect-helper';
 
 export class UserRepo implements IUserRepo {
   async add(dto: AddUserDto): Promise<UserDto> {
+    const existentEmail = (await pg.query('SELECT * FROM users WHERE email = $1', [dto.email])).rows;
+    if(existentEmail.length) throw new AlreadyRegisteredEmailError();
     const { rows } = await pg.query('INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *', [dto.name, dto.email, dto.password]);
     const user = rows[0];
 

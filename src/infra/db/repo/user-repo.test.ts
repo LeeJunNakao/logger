@@ -19,8 +19,8 @@ describe('User Repo', () => {
     const promise = repo.add({
       name: 'James de Oliveira',
       email: 'james@email.com',
-      password: '123456'
-    })
+      password: '123456',
+    });
 
     await expect(promise).rejects.toThrowError();
   });
