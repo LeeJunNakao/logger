@@ -20,3 +20,8 @@ export const tokenError = (): HttpResponse => ({
   status: 400,
   body: { message: new InvalidTokenError().message },
 });
+
+export const databaseError = (message: string): HttpResponse => ({
+  status: 400,
+  body: { message }
+})

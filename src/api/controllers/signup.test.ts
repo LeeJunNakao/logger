@@ -2,7 +2,7 @@ import { SignupController } from './signup';
 import { EmailValidatorAdapter, PasswordValidatorAdapter, EncrypterAdapter, JwtAdapter } from '../../utils';
 import { UserService } from '../../domain/services/user';
 import { UserRepo } from '../../infra/db/repo/user-repo';
-import { serverError, badRequest } from '../helpers';
+import { serverError, badRequest, databaseError } from '../helpers';
 import { MissingParamError, InvalidParamError } from '../errors';
 import { truncateDatabase } from '../../infra/db/helpers/query-helpers';
 
@@ -60,6 +60,13 @@ describe('SignupController Integration', () => {
     const { sut } = makeSut();
     const response = await sut.handle({ body: { ...data, email: 'invalid_email.com' } });
     expect(response).toEqual(badRequest(new InvalidParamError('email')));
+  });
+
+  test('Should return status 400 if email already exists', async() => {
+    const { sut } = makeSut();
+    await sut.handle({ body: data });
+    const response = await sut.handle({ body: { ...data, name: 'outra pessoa' }});
+    expect(response).toEqual(databaseError('Email already registered in database'));
   });
 
   test('Should return status 400 if password is not valid', async() => {

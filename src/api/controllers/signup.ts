@@ -1,6 +1,6 @@
 import { HttpRequest, HttpResponse, EmailValidator, PasswordValidator, Controller } from '../protocols';
 import { MissingParamError, InvalidParamError } from '../errors';
-import { badRequest, serverError } from '../helpers';
+import { badRequest, serverError, databaseError } from '../helpers';
 import { IUserService } from '../../domain/protocols/user-service';
 
 export class SignupController implements Controller {
@@ -45,6 +45,7 @@ export class SignupController implements Controller {
         body: token,
       };
     } catch (error) {
+      if(error.type === 'Database') return databaseError(error.message)
       return serverError();
     }
   }
