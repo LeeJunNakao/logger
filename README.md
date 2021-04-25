@@ -13,7 +13,7 @@
 # Endpoints
 
 ## /signup
-* POST\
+* POST
 **request payload**  
 {  
     name: string,  
