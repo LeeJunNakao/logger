@@ -13,28 +13,27 @@
 # Endpoints
 
 ## /signup
-* POST
-**request payload**  
-{  
-    name: string,  
-    email: string,  
-    password: string  
-}  
 
-**response payload**  
+##### POST  
+**request payload:**  
 {  
-    token: string  
+&nbsp;&nbsp;&nbsp;&nbsp; name: string,  
+&nbsp;&nbsp;&nbsp;&nbsp; email: string,  
+&nbsp;&nbsp;&nbsp;&nbsp;  password: string  
+}  
+**response payload:**  
+{  
+&nbsp;&nbsp;&nbsp;&nbsp; token: string  
 }  
 
 ## /signin
-* POST  
-**payload**  
+##### POST
+**request payload:**  
 {  
-    email: string,  
-    password: string  
+&nbsp;&nbsp;&nbsp;&nbsp; email: string,  
+&nbsp;&nbsp;&nbsp;&nbsp; password: string  
 }  
-
-**response payload**  
+**response payload:**  
 {  
-    token: string  
+&nbsp;&nbsp;&nbsp;&nbsp; token: string  
 }  
