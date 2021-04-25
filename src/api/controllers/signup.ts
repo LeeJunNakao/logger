@@ -45,7 +45,7 @@ export class SignupController implements Controller {
         body: token,
       };
     } catch (error) {
-      if(error.type === 'Database') return databaseError(error.message)
+      if (error.type === 'Database') return databaseError(error.message);
       return serverError();
     }
   }
