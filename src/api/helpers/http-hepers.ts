@@ -23,5 +23,5 @@ export const tokenError = (): HttpResponse => ({
 
 export const databaseError = (message: string): HttpResponse => ({
   status: 400,
-  body: { message }
-})
+  body: { message },
+});

@@ -9,3 +9,32 @@
 # Attention - TYPEORM:
 * Remember install typeorm modules typing the command inside its directory: `yarn` or `npm install`
 * Environment variables needed. Create a .env directory with necessary variables.
+
+# Endpoints
+
+## /signup
+* POST
+**request payload**
+{
+    name: string,
+    email: string,
+    password: string
+}
+
+**response payload**
+{
+    token: string
+}
+
+## /signin
+* POST 
+**payload**
+{
+    email: string
+    password: string
+}
+
+**response payload**
+{
+    token: string
+}

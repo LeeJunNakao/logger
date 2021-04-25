@@ -65,7 +65,7 @@ describe('SignupController Integration', () => {
   test('Should return status 400 if email already exists', async() => {
     const { sut } = makeSut();
     await sut.handle({ body: data });
-    const response = await sut.handle({ body: { ...data, name: 'outra pessoa' }});
+    const response = await sut.handle({ body: { ...data, name: 'outra pessoa' } });
     expect(response).toEqual(databaseError('Email already registered in database'));
   });
 
