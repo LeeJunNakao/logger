@@ -37,3 +37,28 @@
 {  
 &nbsp;&nbsp;&nbsp;&nbsp; token: string  
 }  
+
+## /validate-token
+##### POST
+**request payload**
+{
+    &nbsp;&nbsp;&nbsp;&nbsp; token: string
+}
+**response payload**
+{
+    &nbsp;&nbsp;&nbsp;&nbsp; id: string | number,
+    &nbsp;&nbsp;&nbsp;&nbsp; name: string,
+    &nbsp;&nbsp;&nbsp;&nbsp; email: string
+}
+
+## /recover-password
+### POST
+**request payload**
+{
+    &nbsp;&nbsp;&nbsp;&nbsp; email: string
+}
+
+**response payload**
+{
+    &nbsp;&nbsp;&nbsp;&nbsp; message: string
+}
