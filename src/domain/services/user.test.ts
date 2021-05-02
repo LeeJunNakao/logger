@@ -29,11 +29,23 @@ class HttpClient implements IHttpClient {
   }
 }
 
+const interceptedValues = {
+  password: '',
+};
+
+class PasswordGeneratorIntercepter extends PasswordGeneratorAdapter {
+  generate(len: number = 8): string {
+    const password = super.generate(len);
+    interceptedValues.password = password;
+    return password;
+  }
+}
+
 const makeSut = (httpClientStatus?: number): UserService => {
   const encypter = new EncrypterAdapter();
   const jwt = new JwtAdapter();
   const repo = new UserRepo();
-  const passwordGenerator = new PasswordGeneratorAdapter();
+  const passwordGenerator = new PasswordGeneratorIntercepter();
   const emailSender = new EmailSender(new HttpClient(httpClientStatus));
   return new UserService(repo, encypter, jwt, passwordGenerator, emailSender);
 };
@@ -57,6 +69,9 @@ describe('User Test Integration - Recover password', () => {
     const sut = makeSut();
     await sut.add(userDto);
     await sut.recoverPassword(userDto.email);
+    const { token } = await sut.login({ email: userDto.email, password: interceptedValues.password });
+    expect(token).toBeTruthy();
+    expect(userDto.password).not.toEqual(interceptedValues.password);
   });
 
   test('Should throws if http client status code is not 200', async() => {
