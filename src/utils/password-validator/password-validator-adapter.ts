@@ -1,4 +1,4 @@
-import { PasswordValidator } from './protocols/validators';
+import { PasswordValidator } from '../protocols/validators';
 import validator from 'validator';
 
 export class PasswordValidatorAdapter implements PasswordValidator {

@@ -1,4 +1,4 @@
-import { PasswordGenerator as IPasswordGenerator } from './protocols/password-generator';
+import { PasswordGenerator as IPasswordGenerator } from '../protocols/password-generator';
 
 export class PasswordGenerator implements IPasswordGenerator {
   private generateChar(): string {

@@ -1,7 +1,7 @@
-import { Token } from '../api/protocols';
-import { Jwt } from './protocols/jwt';
 import jwt from 'jsonwebtoken';
-import { env } from '../config/env';
+import { Token } from 'src/api/protocols';
+import { Jwt } from '../protocols/jwt';
+import { env } from '../../config/env';
 
 export class JwtAdapter implements Jwt {
   private readonly key: string;
