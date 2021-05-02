@@ -26,7 +26,7 @@ export class PasswordGenerator implements IPasswordGenerator {
     return upper ? char.toUpperCase() : char;
   }
 
-  generate(len: number = 7): string {
+  generate(len: number = 8): string {
     const password: string[] = [];
     if (len < 4) throw new Error();
 

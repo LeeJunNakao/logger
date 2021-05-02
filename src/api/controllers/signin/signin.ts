@@ -26,6 +26,7 @@ export class SigninController implements Controller {
       }
       const emailIsValid = this.emailValidator.validate(email);
       const passwordIsValid = this.passwordValidator.validate(password);
+      console.log({ passwordIsValid });
 
       if (!emailIsValid || !passwordIsValid) return authError();
 
