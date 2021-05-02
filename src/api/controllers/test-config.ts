@@ -42,6 +42,10 @@ export const makeUserService = (): IUserService => {
         email: user.email,
       };
     }
+
+    async recoverPassword(email: string): Promise<void> {
+      await new Promise(resolve => resolve(null));
+    }
   }
 
   return new Service();

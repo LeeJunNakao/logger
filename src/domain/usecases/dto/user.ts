@@ -17,7 +17,14 @@ export interface LoginUserDto {
 }
 
 export interface UserInfoDto {
-  id: string | Number,
+  id: string | number,
   name: string,
   email: string,
+}
+
+export interface UpdateUserDto {
+  id?: string | number,
+  name?: string,
+  email?: string,
+  password?: string,
 }

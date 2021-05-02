@@ -1,6 +1,6 @@
-import { MissingParamError, ServerError, AuthError } from '../errors';
-import { authError } from '../helpers/http-hepers';
-import { makeSut, user as validData } from './test-config';
+import { MissingParamError, ServerError, AuthError } from '../../errors';
+import { authError } from '../../helpers/http-hepers';
+import { makeSut, user as validData } from '../test-config';
 import { SigninController } from './signin';
 
 describe('Signin Controller', () => {

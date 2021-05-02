@@ -47,3 +47,43 @@ describe('User Repo', () => {
     expect(user.id).toEqual(addedUser.id);
   });
 });
+
+describe('User Repo - Update', () => {
+  beforeAll(async() => await truncateDatabase());
+
+  afterEach(async() => await truncateDatabase());
+
+  const updateDto = {
+    name: 'New Name',
+    email: 'new@email.com',
+    password: 'new_password',
+  };
+
+  test('Should throws if id not exists', async() => {
+    const repo = new UserRepo();
+    const promise = repo.update({ id: 999, ...updateDto });
+    await expect(promise).rejects.toThrow();
+  });
+
+  test('Should throws if id and email is not provided', async() => {
+    const repo = new UserRepo();
+    await repo.add(createUserDto);
+    const { email, ...dto } = updateDto;
+    const promise = repo.update(dto);
+    await expect(promise).rejects.toThrow();
+  });
+
+  test('Should update by id successfully', async() => {
+    const repo = new UserRepo();
+    const { id } = await repo.add(createUserDto);
+    const updatedUser = await repo.update({ id, ...updateDto });
+    expect(updatedUser).toEqual({ id, ...updateDto });
+  });
+
+  test('Should update by email successfully', async() => {
+    const repo = new UserRepo();
+    const { email, id } = await repo.add(createUserDto);
+    const updatedUser = await repo.update({ ...updateDto, email });
+    expect(updatedUser).toEqual({ ...updateDto, email, id });
+  });
+});

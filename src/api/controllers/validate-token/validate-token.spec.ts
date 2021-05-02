@@ -1,7 +1,7 @@
 import { ValidateTokenController } from './validate-token';
-import { SigninController } from './signin';
-import { makeSut, user } from './test-config';
-import { tokenError } from '../helpers';
+import { SigninController } from '../signin';
+import { makeSut, user } from '../test-config';
+import { tokenError } from '../../helpers';
 
 describe('Validate Token', () => {
   test('Should return 400 if service throws', async() => {

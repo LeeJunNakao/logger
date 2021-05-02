@@ -1,5 +1,5 @@
-import { MissingParamError, InvalidParamError, ServerError } from '../errors';
-import { makeSut, user as validData } from './test-config';
+import { MissingParamError, InvalidParamError, ServerError } from '../../errors';
+import { makeSut, user as validData } from '../test-config';
 import { SignupController } from './signup';
 
 describe('Signup Controller', () => {

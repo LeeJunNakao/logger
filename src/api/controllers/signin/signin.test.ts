@@ -1,25 +1,22 @@
-import { SigninController } from './signin';
-import { SignupController } from './signup';
-import { EmailValidatorAdapter, PasswordValidatorAdapter, EncrypterAdapter, JwtAdapter } from '../../utils';
-import { UserService } from '../../domain/services/user';
-import { UserRepo } from '../../infra/db/repo/user-repo';
-import { serverError, badRequest, authError } from '../helpers';
-import { MissingParamError, AuthError } from '../errors';
-import { truncateDatabase } from '../../infra/db/helpers/query-helpers';
+import { SigninController } from '../signin';
+import { SignupController } from '../signup';
+import { EmailValidatorAdapter, PasswordValidatorAdapter } from '../../../utils';
+import { serverError, badRequest, authError } from '../../helpers';
+import { MissingParamError, AuthError } from '../../errors';
+import { truncateDatabase } from '../../../infra/db/helpers/query-helpers';
+import { makeUserService } from '../';
+import { IUserService } from 'src/domain/protocols/user-service';
 
 interface SutTypes {
   sut: SigninController,
-  serviceSut: UserService,
+  serviceSut: IUserService,
   signupSut: SignupController,
 }
 
 const makeSut = (): SutTypes => {
   const emailValidator = new EmailValidatorAdapter();
   const passwordValidator = new PasswordValidatorAdapter();
-  const repo = new UserRepo();
-  const encrypter = new EncrypterAdapter();
-  const jwt = new JwtAdapter();
-  const serviceSut = new UserService(repo, encrypter, jwt);
+  const serviceSut = makeUserService();
   const sut = new SigninController(emailValidator, passwordValidator, serviceSut);
   const signupSut = new SignupController(emailValidator, passwordValidator, serviceSut);
   return { sut, serviceSut, signupSut };

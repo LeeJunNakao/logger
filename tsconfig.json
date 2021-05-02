@@ -1,11 +1,21 @@
 {
-    "compilerOptions": {
-        "strictNullChecks": true,
-        "outDir": "./dist",
-        "module": "commonjs",
-        "target": "es2019",
-        "esModuleInterop": true,
-        "allowJs": true,
-        "experimentalDecorators": true
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "outDir": "./dist",
+    "module": "commonjs",
+    "target": "es2019",
+    "esModuleInterop": true,
+    "allowJs": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "src/*": [
+        "./src/*"
+      ],
+      "exclude": [
+        "node_modules"
+      ]
     }
+  }
 }

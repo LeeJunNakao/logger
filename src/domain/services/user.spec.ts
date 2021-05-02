@@ -1,9 +1,9 @@
 import { UserService } from './user';
-import { AddUserDto, UserDto, LoginUserDto } from '../usecases/dto/user';
+import { AddUserDto, UserDto, LoginUserDto, UpdateUserDto } from '../usecases/dto/user';
 import { UserRepo } from '../../infra/db/repo/protocols/user-repo';
-import { Encrypter } from '../../utils/protocols/encrypter';
-import { Jwt } from '../../utils/protocols/jwt';
-import { Token } from '../../api/protocols';
+import { Encrypter, Jwt, PasswordGenerator } from 'src/utils/protocols';
+import { Token } from 'src/api/protocols';
+import { EmailSender } from 'src/email-sender/protocols';
 
 const userDto = {
   name: 'Some name',
@@ -22,6 +22,8 @@ interface SutTypes {
   repoSut: UserRepo,
   encrypterSut: Encrypter,
   jwtSut: Jwt,
+  passwordGeneratorSut: PasswordGenerator,
+  emailSenderSut: EmailSender,
 }
 
 class UserRepoSut implements UserRepo {
@@ -39,6 +41,15 @@ class UserRepoSut implements UserRepo {
       id: 1,
       name: userDto.name,
       email: userDto.email,
+      password: 'hashed_password',
+    }));
+  }
+
+  async update(dto: UpdateUserDto): Promise<UserDto> {
+    return await new Promise(resolve => resolve({
+      id: 1,
+      name: dto.name ?? userInfo.name,
+      email: dto.email ?? userInfo.email,
       password: 'hashed_password',
     }));
   }
@@ -64,12 +75,26 @@ class JwtSut implements Jwt {
   }
 }
 
+class PasswordGeneratorSut implements PasswordGenerator {
+  generate(): string {
+    return 'Nova_senha';
+  }
+}
+
+class EmailSenderSut implements EmailSender {
+  async send(email: string, subject: string, message: string): Promise<Boolean> {
+    return await new Promise((resolve) => resolve(true));
+  }
+}
+
 const makeSut = (): SutTypes => {
   const repoSut = new UserRepoSut();
   const encrypterSut = new EncrypterSut();
   const jwtSut = new JwtSut();
-  const sut = new UserService(repoSut, encrypterSut, jwtSut);
-  return { sut, repoSut, encrypterSut, jwtSut };
+  const passwordGeneratorSut = new PasswordGeneratorSut();
+  const emailSenderSut = new EmailSenderSut();
+  const sut = new UserService(repoSut, encrypterSut, jwtSut, passwordGeneratorSut, emailSenderSut);
+  return { sut, repoSut, encrypterSut, jwtSut, passwordGeneratorSut, emailSenderSut };
 };
 
 describe('User Service add', () => {
@@ -186,5 +211,63 @@ describe('User Service validateToken', () => {
     const { sut } = makeSut();
     const result = await sut.validateToken(token);
     expect(result).toEqual(userInfo);
+  });
+});
+
+describe('User service recover password', () => {
+  test('Should throw if email is not provided', async() => {
+    const { sut } = makeSut();
+    const promise = sut.recoverPassword('');
+    await expect(promise).rejects.toThrow();
+  });
+
+  test('Should throw if password generator throws', async() => {
+    const { sut, passwordGeneratorSut } = makeSut();
+    jest.spyOn(passwordGeneratorSut, 'generate').mockImplementationOnce(() => {
+      throw new Error();
+    });
+    const promise = sut.recoverPassword('email@email.com');
+    await expect(promise).rejects.toThrow();
+  });
+
+  test('Should throw if encrypter throws', async() => {
+    const { sut, encrypterSut } = makeSut();
+    jest.spyOn(encrypterSut, 'hash').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+    const promise = sut.recoverPassword('email@email.com');
+    await expect(promise).rejects.toThrow();
+  });
+
+  test('Should throw if repo throws', async() => {
+    const { sut, repoSut } = makeSut();
+    jest.spyOn(repoSut, 'update').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+    const promise = sut.recoverPassword('email@email.com');
+    await expect(promise).rejects.toThrow();
+  });
+
+  test('Should throw if email sender throws', async() => {
+    const { sut, emailSenderSut } = makeSut();
+    jest.spyOn(emailSenderSut, 'send').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())));
+    const promise = sut.recoverPassword('email@email.com');
+    await expect(promise).rejects.toThrow();
+  });
+
+  test('Should throw if email sender return false', async() => {
+    const { sut, emailSenderSut } = makeSut();
+    jest.spyOn(emailSenderSut, 'send').mockReturnValueOnce(new Promise((resolve) => resolve(false)));
+    const promise = sut.recoverPassword('email@email.com');
+    await expect(promise).rejects.toThrow();
+  });
+
+  test('Should send email successfully', async() => {
+    const { sut, passwordGeneratorSut, encrypterSut, repoSut, emailSenderSut } = makeSut();
+    const passwordGenSpy = jest.spyOn(passwordGeneratorSut, 'generate');
+    const encrypterSpy = jest.spyOn(encrypterSut, 'hash');
+    const repoSpy = jest.spyOn(repoSut, 'update');
+    const emailSenderSpy = jest.spyOn(emailSenderSut, 'send');
+    await sut.recoverPassword('email@email.com');
+    expect(passwordGenSpy).toHaveLastReturnedWith('Nova_senha');
+    expect(encrypterSpy).toHaveBeenLastCalledWith('Nova_senha');
+    expect(repoSpy).toHaveBeenLastCalledWith({ email: 'email@email.com', password: 'hash' });
+    expect(emailSenderSpy).toHaveBeenLastCalledWith('email@email.com', 'Recuperação de email', 'Seu novo password é Nova_senha');
   });
 });

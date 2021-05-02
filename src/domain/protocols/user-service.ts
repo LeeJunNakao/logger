@@ -5,4 +5,5 @@ export interface IUserService{
   add: (dto: AddUserDto) => Promise<Token>,
   login: (dto: LoginUserDto) => Promise<Token>,
   validateToken: (token: Token) => Promise<UserInfoDto>,
+  recoverPassword: (email: string) => Promise<void>,
 }

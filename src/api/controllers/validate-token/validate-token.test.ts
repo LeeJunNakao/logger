@@ -1,6 +1,6 @@
-import { makeValidateTokenController, makeSignupController } from '.';
-import { tokenError } from '../helpers';
-import { truncateDatabase } from '../../infra/db/helpers/query-helpers';
+import { makeValidateTokenController, makeSignupController } from '../index';
+import { tokenError } from '../../helpers';
+import { truncateDatabase } from '../../../infra/db/helpers/query-helpers';
 
 const user = {
   name: 'Fulano de Aragão',

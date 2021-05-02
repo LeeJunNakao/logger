@@ -1,6 +1,6 @@
-import { Controller, HttpRequest, HttpResponse } from '../protocols';
-import { IUserService } from '../../domain/protocols/user-service';
-import { tokenError } from '../helpers';
+import { Controller, HttpRequest, HttpResponse } from '../../protocols';
+import { IUserService } from '../../../domain/protocols/user-service';
+import { tokenError } from '../../helpers';
 
 export class ValidateTokenController implements Controller {
   private readonly userService: IUserService;

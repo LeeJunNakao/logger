@@ -1,7 +1,7 @@
 import { HttpRequest, HttpResponse, EmailValidator, PasswordValidator, Controller } from '../protocols';
-import { MissingParamError, AuthError } from '../errors';
-import { badRequest, serverError, authError } from '../helpers';
-import { IUserService } from '../../domain/protocols/user-service';
+import { MissingParamError, AuthError } from '../../errors';
+import { badRequest, serverError, authError } from '../../helpers';
+import { IUserService } from '../../../domain/protocols/user-service';
 
 export class SigninController implements Controller {
   private readonly emailValidator: EmailValidator;
