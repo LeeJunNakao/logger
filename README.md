@@ -18,6 +18,9 @@
 ### RUN TESTS
 * docker-compose run test
 
+### USING GIT
+* Copy your ssh files into ~/shared_ssh, the docker will import them
+
 ## Endpoints
 
 ## /signup

@@ -16,6 +16,7 @@ services:
       - "5050:5050"
     volumes: 
       - .:/usr/app
+      - ~/shared_ssh:~/.ssh
     depends_on:
       - pgsql-db
   
