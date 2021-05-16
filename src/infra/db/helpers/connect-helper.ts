@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const pool = new Pool({
+const config = {
   user: process.env.PGUSER,
   host: process.env.PGHOST,
   database: process.env.PGDATABASE,
@@ -12,7 +12,11 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: false,
   },
-});
+};
+
+const { ssl, ...configDev } = config;
+
+const pool = new Pool(process.env.NODE_DEV ? configDev : config);
 
 pool.on('error', (err, client) => {
   console.log('Postgres Error', err);

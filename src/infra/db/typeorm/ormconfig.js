@@ -24,4 +24,6 @@ const config = {
   },
 };
 
-module.exports = config;
+const { ssl, ...configDev } = config;
+
+module.exports = process.env.NODE_DEV ? configDev : config;

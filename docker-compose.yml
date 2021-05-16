@@ -1,0 +1,36 @@
+version: "3"
+
+volumes:
+  db-data:
+    driver: local
+
+services:
+  app: &app
+    hostname: app
+    image: logger_server
+    stdin_open: true
+    tty: true 
+    build: .
+    command: bash
+    ports:
+      - "5050:5050"
+    volumes: 
+      - .:/usr/app
+    depends_on:
+      - pgsql-db
+  
+  test:
+    <<: *app
+    environment:
+      NODE_DEV: 'true'
+    command: yarn test
+
+  pgsql-db:
+    hostname: postgres
+    image: postgres:11
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+    ports:
+      - "4321:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
